@@ -338,8 +338,31 @@ export default function TerminalInterface() {
                 role: "ai", 
                 content: `Disconnected from Daemon`
               }])
-            }
 
+              break
+            }
+            
+            case command === "/show bots":{
+              setMessages((prev) => [
+                ...prev,
+                {
+                  role: "ai",
+                  content: `Available Bot Styles:
+      
+      1. Classic Terminal
+      2. Modern Minimal
+      3. Cyber Bot
+      4. Quantum AI
+      5. Neural Net
+      6. Digital Assistant
+      7. Trading Expert
+      8. Market Analyzer
+      
+      Use /change bot <number> to select a style.`,
+                },
+              ])
+              break
+            }
             case command === "/bot": {
             
               try {
@@ -749,6 +772,18 @@ AI agent trading bots designed to grow your Solana or Dae tokens`
           setMessages((prev) => [...prev, { role: "ai", content: `Bot color changed to ${color}.` }])
         } else {
           setMessages((prev) => [...prev, { role: "ai", content: "Invalid color. Use /show colors to see available options." }])
+        }
+        break
+      }
+
+      case command.startsWith("/change bot "):{
+        
+        const botNumber = parseInt(command.split(" ")[2])
+        if (botNumber >= 1 && botNumber <= 8) {
+          setCurrentBot(botNumber)
+          setMessages((prev) => [...prev, { role: "ai", content: `Bot style changed to style ${botNumber}.` }])
+        } else {
+          setMessages((prev) => [...prev, { role: "ai", content: "Invalid bot number. Use /show bots to see available styles." }])
         }
         break
       }
