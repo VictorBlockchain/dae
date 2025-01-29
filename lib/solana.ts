@@ -1,8 +1,8 @@
 import { Keypair, PublicKey, Connection, Transaction, SystemProgram } from "@solana/web3.js"
-import {  TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {  getAssociatedTokenAddress, getAccount, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import crypto from "crypto";
 import mongoose from "mongoose";
-import Bot from "./models/bot"; 
+// import Bot from "./models/bot"; 
 // Connect to MongoDB
 if (!process.env.MONGODB_URI) {
   throw new Error("MONGODB_URI is not defined");
@@ -45,86 +45,53 @@ decrypt(encrypted: string, iv: string): string {
   return decrypted.toString();
 }
   
-async generateBotAddress(user:string, name:string):  Promise<any> {
-    
-    const existingBot = await Bot.findOne({ user});
-    if (existingBot) {
-      return {success: false, message: "Bot already exists"};
-    }
-    
-    const keypair = Keypair.generate();
-    // Encrypt the private key
-    const privateKeyHex = Buffer.from(keypair.secretKey).toString("hex");
-    const { iv, encrypted } = this.encrypt(privateKeyHex);
-    // Store the public key, encrypted private key, and IV in MongoDB
 
-    const bot = new Bot({
-      user: user,
-      botname: name,
-      botid: 1,
-      publicKey: keypair.publicKey.toString(),
-      encryptedPrivateKey: encrypted,
-      iv: iv,
-      power: 0,
-      followers: [],
-      following: [],
-      token: null,
-      trades: [],
-      active: 0,
-      slippage: 1,
-      prority: 1
-    });
-    
-    await bot.save();
-    return {success: true, message: keypair.publicKey.toString()};
   
-  }
-  
-  // Function to fetch and decrypt the private key
-async getBotPrivateKey(publicKey: string): Promise<Uint8Array> {
-  const bot:any = await Bot.findOne({ publicKey });
-  if (!bot) {
-    throw new Error("Bot not found");
-  }
-
-  // Decrypt the private key
-  const privateKeyHex = this.decrypt(bot.encryptedPrivateKey, bot.iv);
-  return Uint8Array.from(Buffer.from(privateKeyHex, "hex"));
-}
-  
-  async getBalance(address: string): Promise<number> {
+  async getBalance(address: any): Promise<number> {
     try {
       const publicKey = new PublicKey(address)
       const balance = await this.connection.getBalance(publicKey)
+      console.log(balance)
       return balance / 10 ** 9 // Convert lamports to SOL
     } catch (error) {
       console.error("Failed to get balance:", error)
       return 0
     }
   }
-
+  
   async getTokenBalance(userAddress: string, tokenMintAddress: string): Promise<number> {
     try {
-      const userPublicKey = new PublicKey(userAddress);
-      const tokenMintPublicKey = new PublicKey(tokenMintAddress);
+        const userPublicKey = new PublicKey(userAddress);
+        const tokenMintPublicKey = new PublicKey(tokenMintAddress);
+        
+        // Get the associated token account for the user
+        const associatedTokenAccount = await getAssociatedTokenAddress(
+            tokenMintPublicKey,
+            userPublicKey
+        );
 
-      // Get the associated token account for the user and token mint
-      const associatedTokenAccount = await Token.getAssociatedTokenAddress(
-        TOKEN_PROGRAM_ID,
-        tokenMintPublicKey,
-        userPublicKey
-      );
+        // 🔹 Check if the token account exists before fetching balance
+        try {
+            const accountInfo = await getAccount(this.connection, associatedTokenAccount);
+            if (!accountInfo) {
+                console.warn("Token account does not exist for user.");
+                return 0; // If the token account doesn't exist, return 0 balance
+            }
+        } catch (error) {
+            console.warn("Token account does not exist for user.");
+            return 0; // If an error occurs, assume the account does not exist
+        }
 
-      // Fetch the token account info
-      const tokenAccountInfo = await this.connection.getTokenAccountBalance(associatedTokenAccount);
-
-      // Return the token balance
-      return tokenAccountInfo.value.amount;
+        // Fetch the token balance
+        const tokenAccountInfo = await this.connection.getTokenAccountBalance(associatedTokenAccount);
+        return tokenAccountInfo.value.uiAmount || 0;
+        
     } catch (error) {
-      console.error("Failed to get token balance:", error);
-      return 0; // Return 0 if the token account doesn't exist or an error occurs
+        console.error("Failed to get token balance:", error);
+        return 0;
     }
-  }
+}
+
   
   // async transferTokens(
   //   fromKeypair: Keypair,
@@ -150,30 +117,30 @@ async getBotPrivateKey(publicKey: string): Promise<Uint8Array> {
   // }
 
   // Function to send a transaction using the decrypted private key
-async transferTokens(publicKey: string, destination: string, amount: number): Promise<boolean> {
-  try {
-
-    const privateKey = await this.getBotPrivateKey(publicKey);
-    const keypair = Keypair.fromSecretKey(privateKey);
+// async transferTokens(publicKey: string, destination: string, amount: number): Promise<boolean> {
+//   try {
     
-    const connection:any = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: keypair.publicKey,
-        toPubkey: new PublicKey(destination),
-        lamports: amount * 10 ** 9,
-      })
-    );
+//     const privateKey = await this.getBotPrivateKey(publicKey);
+//     const keypair = Keypair.fromSecretKey(privateKey);
     
-    const signature = await connection.sendTransaction(transaction, [keypair]);
-    await connection.confirmTransaction(signature);
-    return true
-    console.log("Transaction sent with signature:", signature);
+//     const connection:any = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
+//     const transaction = new Transaction().add(
+//       SystemProgram.transfer({
+//         fromPubkey: keypair.publicKey,
+//         toPubkey: new PublicKey(destination),
+//         lamports: amount * 10 ** 9,
+//       })
+//     );
+    
+//     const signature = await connection.sendTransaction(transaction, [keypair]);
+//     await connection.confirmTransaction(signature);
+//     return true
+//     console.log("Transaction sent with signature:", signature);
   
-    } catch (error) {
-      console.error("Failed to get bot private key:", error);
-      return false;
-    }
-
-  }
+//     } catch (error) {
+//       console.error("Failed to get bot private key:", error);
+//       return false;
+//     }
+  
+//   }
 }

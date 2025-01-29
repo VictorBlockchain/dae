@@ -2,6 +2,7 @@
 
 import clientPromise from "@/lib/mongodb";
 import { NextResponse } from "next/server";
+import {SolanaManager} from "@/lib/solana";
 
 export async function GET(req: Request) {
     try {
@@ -20,11 +21,21 @@ export async function GET(req: Request) {
 
       // Find the bot associated with the user
       const daemon = await db.collection("bots").findOne({ user });
-
+      
       if (daemon) {
+        
+        const dae:any = process.env.NEXT_PUBLIC_DAE;
+        const solana = new SolanaManager();
+        const balanceSol = await solana.getBalance(daemon.publicKey).catch(() => 0);
+        const balanceToken = await solana.getTokenBalance(daemon.publicKey, dae).catch(() => 0);
+            
+        const { encryptedPrivateKey, ...responseBot } = daemon;
+        
         return NextResponse.json({
           success: true,
-          message: daemon
+          message: responseBot,
+          balanceSol:balanceSol || 0,
+          balanceToken:balanceToken || 0
         })
       } else {
         return NextResponse.json({

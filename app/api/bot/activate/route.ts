@@ -50,6 +50,8 @@ export async function POST(req: Request) {
     // Check if bot already exists
     const existingBot = await botsCollection.findOne({ user });
     if (existingBot) {
+      //get balances
+      
       const { encryptedPrivateKey, ...responseBot } = existingBot;
       
       return NextResponse.json({ success: true, message: responseBot });

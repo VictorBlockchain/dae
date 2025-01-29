@@ -208,12 +208,15 @@ export default function TerminalInterface() {
   const [isTypingComplete, setIsTypingComplete] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [user, setUser] = useState<any>()
+  const [botStatusMessage, setBotStatusMessage] = useState("mode: disconnected...")
   const { toast } = useToast()
 
   useEffect(() => {
-
+    
     if (connected) {
       setUser(publicKey.toBase58())
+      setBotStatusMessage('')
+      setBotStatusMessage("mode: connected...")
       toast({
         title: "Connected",
         description: "You have successfully connected your wallet",
@@ -334,6 +337,8 @@ export default function TerminalInterface() {
             case command === "/off": {  
             
               disconnect() 
+              setBotStatusMessage('')
+              setBotStatusMessage("mode: disconnected...")
               setMessages(prev => [...prev, { 
                 role: "ai", 
                 content: `Disconnected from Daemon`
@@ -349,16 +354,16 @@ export default function TerminalInterface() {
                   role: "ai",
                   content: `Available Bot Styles:
       
-      1. Classic Terminal
-      2. Modern Minimal
-      3. Cyber Bot
-      4. Quantum AI
-      5. Neural Net
-      6. Digital Assistant
-      7. Trading Expert
-      8. Market Analyzer
-      
-      Use /change bot <number> to select a style.`,
+  1. Classic Terminal
+  2. Modern Minimal
+  3. Cyber Bot
+  4. Quantum AI
+  5. Neural Net
+  6. Digital Assistant
+  7. Trading Expert
+  8. Market Analyzer
+  
+  Use /change bot <number> to select a style.`,
                 },
               ])
               break
@@ -371,21 +376,21 @@ export default function TerminalInterface() {
                 if (!data.success) {
                   throw new Error("Failed to get bot")
                 }
-              
+               console.log(data)
                 const bot = data.message
                 setBotAddress(bot.publicKey)
                 setMessages((prev) => [
                   ...prev,
-                  { role: "ai", content: `Bot activated with Solana address: ${bot.publicKey}
-          Initial Balance:
-          SOL: 0
-          DAE: 0
-          Status: Ready for trading
-          
-          Use /trade address <token_address> to set the address you want traded.` }
+                  { role: "ai", content: `Wallet: ${bot.publicKey}
+Initial Balance:
+SOL: ${data.balanceSol}
+DAE: ${data.balanceToken}
+Status: Ready for trading
+
+Use /trade address <token_address> to set the address you want traded.` }
                   ])
               } catch (error) {
-                setMessages(prev => [...prev, { role: "ai", content: "Failed to get private key" }])
+                setMessages(prev => [...prev, { role: "ai", content: "Failed to get bot" }])
               }
               break
             }
@@ -491,12 +496,12 @@ AI agent trading bots designed to grow your Solana or Dae tokens`
             setMessages((prev) => [
               ...prev,
               { role: "ai", content: `Bot activated with Solana address: ${bot.publicKey}
-      Initial Balance:
-      SOL: 0
-      DAE: 0
-      Status: Ready for trading
-      
-      Use /trade address <token_address> to set the address you want traded.` }
+Initial Balance:
+SOL: 0
+DAE: 0
+Status: Ready for trading
+
+Use /trade address <token_address> to set the address you want traded.` }
               ])
           } catch (error) {
             console.error("Bot activation failed:", error)
@@ -871,11 +876,13 @@ Usage:
           <div className="text-2xl font-bold">DAEMON v1</div>
           <div className="text-sm">DeepSeek agent trading bot. Designed to grow your Solana and or DAE tokens</div>
           <BotFace color={botColor} style={currentBot} />
-          <TypewriterText 
-            text="status: disconnected"
-            color={textColor}
-            onComplete={() => setIsTypingComplete(true)}
-          /> 
+          {botStatusMessage &&(
+            <TypewriterText 
+              text={botStatusMessage}
+              color={textColor}
+              onComplete={() => setIsTypingComplete(true)}
+            />
+          )}
         </div>
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
@@ -895,11 +902,13 @@ Usage:
         <BotFace color={botColor} style={currentBot} />
         {/* <p color={textColor}>I &nbsp;am your ai copy trade agent. My goal is to grow your Solana and or DAE token balance by persuading other agents to copy my trades. The more DAE tokens I hold, the more aggressively I persuade other agents. I'll aslo accept payment in DAE tokens to join their alliance.<br/><br/> type /help to get started</p> */}
           
-          <TypewriterText 
-            text="status: connected... /help for list of commands"
-            color={textColor}
-            onComplete={() => setIsTypingComplete(true)}
-          /> 
+        {botStatusMessage &&(
+            <TypewriterText 
+              text={botStatusMessage}
+              color={textColor}
+              onComplete={() => setIsTypingComplete(true)}
+            />
+          )}
       </div>
       <div className="flex-grow overflow-y-auto mb-4">
         {messages.map((message, index) => (
