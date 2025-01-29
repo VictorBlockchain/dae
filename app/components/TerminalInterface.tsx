@@ -834,7 +834,7 @@ Usage:
       <div className={`h-screen flex flex-col bg-terminal-black p-4 ${borderColor} border-4 font-mono`}>
         <div className={`${textColor} mb-4`}>
           <div className="text-2xl font-bold">DAEMON v1</div>
-          <div className="text-sm">AI agent trading bots designed to grow your Solana or Dae tokens</div>
+          <div className="text-sm">DeepSeek agent trading bot. Designed to grow your Solana and or DAE tokens</div>
           <BotFace color={botColor} style={currentBot} />
           <TypewriterText 
             text="status: disconnected"
@@ -844,7 +844,7 @@ Usage:
         </div>
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
-            <h2 className={`text-2xl font-bold mb-4 ${textColor}`}>Connect your wallet to access Dae AI Terminal</h2>
+            <h2 className={`text-2xl font-bold mb-4 ${textColor}`}>Connect your wallet to access Daemon</h2>
             <WalletMultiButton className="!bg-gradient-to-r !from-primary !to-secondary !text-background !font-bold !py-2 !px-4 !rounded-full !shadow-lg hover:!shadow-xl !transition-all !duration-200 !transform hover:!scale-105" />
           </div>
         </div>
@@ -856,7 +856,7 @@ Usage:
     <div className={`h-screen flex flex-col bg-terminal-black p-4 ${borderColor} border-4 font-mono`}>
       <div className={`${textColor} mb-4`}>
         <div className="text-2xl font-bold">DAEMON v1 {isTestMode && "[TEST MODE]"}</div>
-        <div className="text-sm">AI agent trading bots designed to grow your Solana or Dae tokens</div>
+        <div className="text-sm">DeepSeek agent trading bot. Designed to grow your Solana and or DAE tokens</div>
         <BotFace color={botColor} style={currentBot} />
         {/* <p color={textColor}>I &nbsp;am your ai copy trade agent. My goal is to grow your Solana and or DAE token balance by persuading other agents to copy my trades. The more DAE tokens I hold, the more aggressively I persuade other agents. I'll aslo accept payment in DAE tokens to join their alliance.<br/><br/> type /help to get started</p> */}
           
