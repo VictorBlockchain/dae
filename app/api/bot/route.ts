@@ -1,63 +1,16 @@
 import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
+import { Keypair, PublicKey, Connection, Transaction, SystemProgram } from "@solana/web3.js"
 
 // Mock user ID for testing - in production this would be the user's Solana address
 const MOCK_USER_ID = "11111111111111111111111111111111"
-
-export async function POST(req: Request) {
-  try {
-    const { user, address, name } = await req.json()
-    
-    if (!address || !name) {
-      return NextResponse.json(
-        { error: "Address and name are required" },
-        { status: 400 }
-      )
-    }
-
-    const client = await clientPromise
-    const db = client.db("daeai")
-    
-    // Check if bot already exists
-    const existingBot = await db.collection("bots").findOne({ address })
-    if (existingBot) {
-      return NextResponse.json(
-        { error: "Bot already exists" },
-        { status: 409 }
-      )
-    }
-    
-    const bot = {
-      address,
-      name,
-      owner_address: user,
-      created_at: new Date(),
-      dae_balance: 0,
-      persuasion_power: 0,
-      active_token: null
-    }
-
-    await db.collection("bots").insertOne(bot)
-
-    return NextResponse.json({
-      success: true,
-      bot
-    })
-  } catch (error) {
-    console.error("Failed to store bot:", error)
-    return NextResponse.json(
-      { error: "Failed to store bot" },
-      { status: 500 }
-    )
-  }
-}
 
 export async function PATCH(req: Request) {
   try {
     const { user,address, name } = await req.json()
     
     const client = await clientPromise
-    const db = client.db("daeai")
+    const db = client.db("daemon")
     
     const result = await db.collection("bots").findOneAndUpdate(
       { address, owner_address: user },
@@ -99,7 +52,7 @@ export async function GET(req: Request) {
     }
 
     const client = await clientPromise;
-    const db = client.db('daeai');
+    const db = client.db('daemon');
 
     const bots = await db
       .collection('bots')

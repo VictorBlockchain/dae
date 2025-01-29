@@ -4,7 +4,7 @@ import clientPromise from "../../lib/mongodb"
 export async function GET() {
   try {
     const client = await clientPromise
-    const db = client.db("daeai")
+    const db = client.db("daemon")
 
     const wallet = await db.collection("wallets").findOne({})
 

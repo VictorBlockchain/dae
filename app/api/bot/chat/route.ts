@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     }
 
     const client = await clientPromise
-    const db = client.db("daeai")
+    const db = client.db("daemon")
 
     // First verify the bot belongs to the mock user
     const bot = await db.collection("bots").findOne({
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     const { initiatorAddress, recipientAddress, message } = await req.json()
     
     const client = await clientPromise
-    const db = client.db("daeai")
+    const db = client.db("daemon")
 
     // Verify the initiator bot belongs to the mock user
     const bot = await db.collection("bots").findOne({

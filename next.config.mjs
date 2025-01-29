@@ -1,6 +1,8 @@
-let userConfig = undefined
+import 'dotenv/config'; // Load environment variables from .env file
+
+let userConfig = undefined;
 try {
-  userConfig = await import('./v0-user-next.config')
+  userConfig = await import('./v0-user-next.config');
 } catch (e) {
   // ignore error
 }
@@ -21,13 +23,22 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
-}
+  env: {
+    MONGODB_URI: process.env.MONGODB_URI,
+    DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
+    SOLANA_RPC_URL: process.env.SOLANA_RPC_URL,
+    ADMIN_SOLANA_ADDRESS: process.env.ADMIN_SOLANA_ADDRESS,
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+    DEFAULT_FEE: process.env.DEFAULT_FEE,
+    FEE_ADDRESS: process.env.FEE_ADDRESS,
+  },
+};
 
-mergeConfig(nextConfig, userConfig)
+mergeConfig(nextConfig, userConfig);
 
 function mergeConfig(nextConfig, userConfig) {
   if (!userConfig) {
-    return
+    return;
   }
 
   for (const key in userConfig) {
@@ -38,11 +49,11 @@ function mergeConfig(nextConfig, userConfig) {
       nextConfig[key] = {
         ...nextConfig[key],
         ...userConfig[key],
-      }
+      };
     } else {
-      nextConfig[key] = userConfig[key]
+      nextConfig[key] = userConfig[key];
     }
   }
 }
 
-export default nextConfig
+export default nextConfig;

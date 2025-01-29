@@ -8,7 +8,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata = {
-  title: "Dae Ai - Terminal Interface",
+  title: "Daemon Ai - Terminal Interface",
   description: "Experience the future of AI communication with our Solana-powered terminal interface",
 }
 
