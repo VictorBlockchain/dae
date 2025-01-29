@@ -23,7 +23,6 @@ async function isAdmin(user: string): Promise<boolean> {
           { status: 401 }
         )
       }
-      
       const client = await clientPromise
       const db = client.db("daemon")
       const adminCollection = db.collection("admin");
