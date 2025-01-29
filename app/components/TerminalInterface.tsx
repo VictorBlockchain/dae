@@ -861,7 +861,7 @@ Usage:
         {/* <p color={textColor}>I &nbsp;am your ai copy trade agent. My goal is to grow your Solana and or DAE token balance by persuading other agents to copy my trades. The more DAE tokens I hold, the more aggressively I persuade other agents. I'll aslo accept payment in DAE tokens to join their alliance.<br/><br/> type /help to get started</p> */}
           
           <TypewriterText 
-            text="I &nbsp;am your ai copy trade agent. My goal is to grow your Solana and or DAE token balance by persuading other agents to copy my trades. The more DAE tokens I hold, the more aggressively I persuade other agents. I'll aslo accept payment in DAE tokens to join their alliance.type /help to get started"
+            text="status: connected... /help for list of commands"
             color={textColor}
             onComplete={() => setIsTypingComplete(true)}
           /> 
