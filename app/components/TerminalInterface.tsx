@@ -194,8 +194,7 @@ const BotFace = ({ color, style }:any) => (
 )
 
 export default function TerminalInterface() {
-  const { publicKey }:any = useWallet()
-  const { connected } = useWallet()
+  const { disconnect, publicKey, connected }:any = useWallet()  
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -332,6 +331,15 @@ export default function TerminalInterface() {
               }
               break
             }
+            case command === "/off": {  
+            
+              disconnect() 
+              setMessages(prev => [...prev, { 
+                role: "ai", 
+                content: `Disconnected from Daemon`
+              }])
+            }
+
             case command === "/bot": {
             
               try {
