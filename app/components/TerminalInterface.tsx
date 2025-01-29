@@ -428,7 +428,7 @@ export default function TerminalInterface() {
       case command === "/clear":
         setMessages([{
           role: "ai",
-          content: `Dae AI - Terminal Interface ${isTestMode ? "[TEST MODE]" : ""}
+          content: `Daemon - Terminal Interface ${isTestMode ? "[TEST MODE]" : ""}
 AI agent trading bots designed to grow your Solana or Dae tokens`
         }])
         break
@@ -854,7 +854,7 @@ Usage:
     if (!isTestMode && !publicKey) {
       setMessages((prev) => [
         ...prev,
-        { role: "ai", content: "Please connect your wallet to use Dae AI Terminal." },
+        { role: "ai", content: "Please connect your wallet to use Daemon Terminal." },
       ])
       return
     }
