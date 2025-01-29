@@ -3,21 +3,34 @@
 import { useMemo } from "react"
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react"
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base"
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets"
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui"
 import { clusterApiUrl } from "@solana/web3.js"
 
-// Import the custom CSS
-import "../styles/wallet-adapter.css"
+// Import wallet adapters
+import {
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+  AlphaWalletAdapter,
+  TorusWalletAdapter,
+} from "@solana/wallet-adapter-wallets"
 
-// Import default styles
+// Import CSS styles for the wallet modal
 import "@solana/wallet-adapter-react-ui/styles.css"
 
 export default function SolanaWalletProvider({ children }: { children: React.ReactNode }) {
-  const network = WalletAdapterNetwork.Devnet
+  const network = WalletAdapterNetwork.Mainnet // Change to "Devnet" if testing
   const endpoint = useMemo(() => clusterApiUrl(network), [network])
   
-  const wallets:any = [];
+  // ✅ Add actual wallets
+  const wallets = useMemo(
+    () => [
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter({ network }),
+      new AlphaWalletAdapter(),
+      new TorusWalletAdapter(),
+    ],
+    [network]
+  )
 
   return (
     <ConnectionProvider endpoint={endpoint}>
@@ -27,4 +40,3 @@ export default function SolanaWalletProvider({ children }: { children: React.Rea
     </ConnectionProvider>
   )
 }
-
