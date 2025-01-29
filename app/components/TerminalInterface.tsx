@@ -835,6 +835,12 @@ Usage:
         <div className={`${textColor} mb-4`}>
           <div className="text-2xl font-bold">DAEMON v1</div>
           <div className="text-sm">AI agent trading bots designed to grow your Solana or Dae tokens</div>
+          <BotFace color={botColor} style={currentBot} />
+          <TypewriterText 
+            text="status: disconnected"
+            color={textColor}
+            onComplete={() => setIsTypingComplete(true)}
+          /> 
         </div>
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
